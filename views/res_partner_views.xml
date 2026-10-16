@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_partner_form_inherit_ai" model="ir.ui.view">
+        <field name="name">res.partner.form.inherit.ai</field>
+        <field name="model">res.partner</field>
+        <field name="inherit_id" ref="base.view_partner_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Ajoute un ruban visuel en haut à droite de la fiche contact -->
+            <xpath expr="//widget[@name='web_ribbon']" position="after">
+                <field name="is_created_by_ai" invisible="1"/>
+                <widget name="web_ribbon" title="🤖 Généré par IA" bg_color="text-bg-info" invisible="not is_created_by_ai"/>
+            </xpath>
+
+        </field>
+    </record>
+</odoo>

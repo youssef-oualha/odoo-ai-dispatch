@@ -1,0 +1,3 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_ai_provider,access.ai.provider,model_ai_provider,,1,1,1,1
+access_project_ai_tag_mapping,access.project.ai.tag.mapping,model_project_ai_tag_mapping,,1,1,1,1

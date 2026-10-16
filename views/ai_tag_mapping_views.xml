@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Vue Liste -->
+    <record id="view_ai_tag_mapping_list" model="ir.ui.view">
+        <field name="name">project.ai.tag.mapping.list</field>
+        <field name="model">project.ai.tag.mapping</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="crm_tag_id" options="{'no_create': True, 'no_open': True}"/>
+                <field name="prestataire_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ai_tag_mapping" model="ir.actions.act_window">
+        <field name="name">Mapping Tags IA</field>
+        <field name="res_model">project.ai.tag.mapping</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Menu dans Configuration > Projet -->
+    <menuitem id="menu_ai_tag_mapping"
+              name="Mapping Tags IA"
+              parent="project.menu_project_config"
+              action="action_ai_tag_mapping"
+              sequence="50"/>
+</odoo>

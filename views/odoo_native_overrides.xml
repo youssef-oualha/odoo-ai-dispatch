@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================== -->
+    <!-- 1. FORCER LA VUE LISTE PAR DÉFAUT SUR LES MENUS NATIFS         -->
+    <!-- ============================================================== -->
+
+    <!-- Menu principal du CRM (Pipeline) -->
+    <record id="crm.crm_lead_action_pipeline" model="ir.actions.act_window">
+        <!-- On place 'list' avant 'kanban' -->
+        <field name="view_mode">list,kanban,graph,pivot,form,activity</field>
+    </record>
+
+    <!-- Menu principal des Tâches (Mes Tâches) -->
+    <record id="project.action_view_task" model="ir.actions.act_window">
+        <field name="view_mode">list,kanban,form,calendar,pivot,graph,activity</field>
+    </record>
+
+    <!-- Menu Toutes les Tâches -->
+    <record id="project.action_view_all_task" model="ir.actions.act_window">
+        <field name="view_mode">list,kanban,form,calendar,pivot,graph,activity</field>
+    </record>
+
+
+    <!-- ============================================================== -->
+    <!-- 2. FORCER LE TRI (FILTRE) PAR DATE DE CRÉATION DÉCROISSANTE    -->
+    <!-- ============================================================== -->
+
+    <!-- Surcharge de la vue Liste standard du CRM -->
+    <record id="crm_lead_view_list_inherit_sort" model="ir.ui.view">
+        <field name="name">crm.lead.list.inherit.sort</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_case_tree_view_oppor"/>
+        <field name="arch" type="xml">
+            <!-- Sur Odoo 19, on cible la balise list (ou tree selon les modules) -->
+            <xpath expr="//list | //tree" position="attributes">
+                <attribute name="default_order">create_date desc</attribute>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Surcharge de la vue Liste standard des Tâches Projet -->
+    <record id="project_task_view_list_inherit_sort" model="ir.ui.view">
+        <field name="name">project.task.list.inherit.sort</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_tree2"/>
+        <field name="arch" type="xml">
+            <xpath expr="//list | //tree" position="attributes">
+                <attribute name="default_order">write_date desc</attribute>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>

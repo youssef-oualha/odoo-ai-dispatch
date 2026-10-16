@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_task_form2_inherit_ai" model="ir.ui.view">
+        <field name="name">project.task.form.inherit.ai</field>
+        <field name="model">project.task</field>
+        <field name="inherit_id" ref="project.view_task_form2"/>
+        <field name="arch" type="xml">
+            
+            <!-- Placer les adresses juste en dessous du Client (partner_id) -->
+            <xpath expr="//field[@name='partner_id']" position="after">
+                <field name="billing_address"/>
+                <field name="intervention_address"/>
+            </xpath>
+
+            <!-- Placer les Étiquettes Prestataires sous les Étiquettes normales -->
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                <field name="prestataire_tag_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+            </xpath>
+            
+        </field>
+    </record>
+</odoo>

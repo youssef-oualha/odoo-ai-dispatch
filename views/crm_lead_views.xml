@@ -1,0 +1,152 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ============================================================== -->
+    <!-- CUSTOM LIST VIEW FOR AI DISPATCH (Odoo 19 syntax)              -->
+    <!-- ============================================================== -->
+    <record id="crm_lead_view_list_ai" model="ir.ui.view">
+        <field name="name">crm.lead.view.list.ai</field>
+        <field name="model">crm.lead</field>
+        <field name="arch" type="xml">
+            <!-- Utilisation de <list> au lieu de <tree> avec le tri par défaut -->
+            <list default_order="write_date desc" sample="1">
+        <!-- Optionnel mais très pratique : affiche la date de modification dans la colonne -->
+                <field name="write_date" string="Dernière Modif"/>
+                <field name="name"/>
+                <field name="partner_id"/>
+                <field name="email_from"/>
+                <field name="ai_status" widget="badge" 
+                       decoration-info="ai_status == 'pending'" 
+                       decoration-success="ai_status == 'done'"/>
+                <field name="ai_request_type"/>
+                <field name="priority"/>
+                <field name="stage_id"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- ============================================================== -->
+    <!-- FORM VIEW INHERITANCE                                          -->
+    <!-- ============================================================== -->
+    <record id="crm_lead_view_form_inherit_ai" model="ir.ui.view">
+        <field name="name">crm.lead.view.form.inherit.ai</field>
+        <field name="model">crm.lead</field>
+        <field name="inherit_id" ref="crm.crm_lead_view_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Add our button to the header -->
+            <xpath expr="//header" position="inside">
+                <button name="action_analyze_with_ai" 
+                        string="🤖 Analyser avec l'IA" 
+                        type="object" 
+                        class="btn-primary"/>
+            </xpath>
+            <!-- Add our status field next to the existing tags -->
+            <xpath expr="//field[@name='tag_ids']" position="after">
+                
+                <label for="ai_status"/>
+                <div class="o_row">
+                    <field name="ai_status" readonly="1" widget="badge" 
+                           decoration-info="ai_status == 'pending'" 
+                           decoration-success="ai_status == 'done'"/>
+                           
+                    <field name="partner_is_created_by_ai" invisible="1"/>
+                    <span class="badge rounded-pill text-bg-info" 
+                          invisible="not partner_is_created_by_ai" 
+                          title="Ce contact a été généré automatiquement par l'IA">
+                        <i class="fa fa-robot"/> Contact IA
+                    </span>
+                    
+                    <!-- 🪄 L'ASTUCE MAGIQUE : Ce span vide absorbe tout l'espace restant, 
+                         ce qui force les deux badges précédents à rester collés à gauche ! -->
+                    <span class="flex-grow-1"></span>
+                </div>
+                
+                <field name="ai_request_type" readonly="1" invisible="ai_status == 'pending'"/>
+                <field name="detected_language" readonly="1" invisible="not detected_language"/>
+                <field name="intervention_address" readonly="1" invisible="not intervention_address"/>
+                <field name="billing_address" readonly="1" invisible="not billing_address"/>
+            </xpath>
+
+            <!-- ADD THE SMART BUTTON HERE -->
+            <xpath expr="//div[@name='button_box']" position="inside">
+                <!-- BOUTON : INTERVENTION (Visible only if task_type is intervention) -->
+                <button name="action_view_task" 
+                        type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-wrench" 
+                        invisible="not task_id or task_type == 'quote'">
+                    <div class="o_stat_info">
+                    <span class="o_stat_text">Intervention</span>
+                    </div>
+                </button>
+
+                <!-- BOUTON : DEVIS (Visible only if task_type is devis) -->
+                <button name="action_view_task" 
+                        type="object" 
+                        class="oe_stat_button" 
+                        icon="fa-file-text-o" 
+                        invisible="not task_id or task_type == 'intervention'">
+                    <div class="o_stat_info">
+                        <span class="o_stat_text">Devis</span>
+                    </div>
+                </button>
+            </xpath>
+
+            <!-- ============================================================== -->
+            <!-- BOUTONS D'ACTIONS MANUELLES (Ajoutés à la fin du groupe)       -->
+            <!-- ============================================================== -->
+            <!-- On cible le groupe parent du champ phone pour forcer une nouvelle ligne -->
+            <xpath expr="//field[@name='phone']/ancestor::group[1]" position="inside">
+                
+                <!-- This goes into the Left Column (acting as the field name) -->
+                <span class="o_form_label" invisible="task_id != False">Tâche</span>
+                
+                <!-- This goes into the Right Column (acting as the field value) -->
+                <div class="d-flex gap-2" invisible="task_id != False">
+                    <button name="action_create_manual_intervention" 
+                            string="Intervention" 
+                            type="object" 
+                            class="btn btn-primary btn-sm" 
+                            icon="fa-wrench"
+                            help="Créer une tâche d'intervention"/>
+                            
+                    <button name="action_create_manual_devis" 
+                            string="Devis" 
+                            type="object" 
+                            class="btn btn-secondary btn-sm" 
+                            icon="fa-file-text-o"
+                            help="Créer une tâche de devis"/>
+                </div>
+
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ============================================================== -->
+    <!-- PROJECT MODULE INTEGRATION: Leads Menu inside Project          -->
+    <!-- ============================================================== -->
+
+    <!-- Action to open CRM Leads -->
+    <record id="action_project_view_leads" model="ir.actions.act_window">
+        <field name="name">Leads IA (CRM)</field>
+        <field name="res_model">crm.lead</field>
+        <!-- list est en premier, donc Odoo ouvrira la vue liste par défaut -->
+        <field name="view_mode">list,kanban,form</field>
+        <!-- On force l'utilisation de notre nouvelle vue liste dédiée -->
+        <field name="view_id" ref="crm_lead_view_list_ai"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun Lead pour le moment !
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Item attached to the Project App's top bar -->
+    <menuitem id="menu_project_leads_shortcut"
+              name="Leads IA"
+              parent="project.menu_main_pm"
+              action="action_project_view_leads"
+              sequence="15"/>
+</odoo>

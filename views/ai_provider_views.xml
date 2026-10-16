@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Form View -->
+    <record id="view_ai_provider_form" model="ir.ui.view">
+        <field name="name">ai.provider.form</field>
+        <field name="model">ai.provider</field>
+        <field name="arch" type="xml">
+            <form string="Fournisseur IA">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="base_url" placeholder="ex: https://api.groq.com/openai/v1"/>
+                        <field name="model_name" placeholder="ex: llama3-8b-8192"/>
+                        <field name="api_key" password="True"/>
+                        <field name="is_active"/>
+                        <field name="is_vision_model" widget="boolean_toggle"/>
+                        <!-- OUR NEW TOGGLE -->
+                        <field name="auto_analyze_leads" widget="boolean_toggle"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- List View (replaces the old tree view) -->
+    <record id="view_ai_provider_list" model="ir.ui.view">
+        <field name="name">ai.provider.list</field>
+        <field name="model">ai.provider</field>
+        <field name="arch" type="xml">
+            <!-- Use <list> instead of <tree> here -->
+            <list string="Fournisseurs IA">
+                <field name="name"/>
+                <field name="is_active"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Action -->
+    <record id="action_ai_provider" model="ir.actions.act_window">
+        <field name="name">Fournisseurs IA</field>
+        <field name="res_model">ai.provider</field>
+        <!-- Change view_mode from tree,form to list,form -->
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- THE MENU ITEM: Attached to Project Configuration -->
+    <menuitem id="menu_ai_provider_config"
+              name="Fournisseurs IA"
+              parent="project.menu_project_config"
+              action="action_ai_provider"
+              sequence="100"/>
+</odoo>

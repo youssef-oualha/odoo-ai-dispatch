@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- 1. LA VUE LISTE (Doit être définie en premier) -->
+    <record id="view_crm_tag_tree_ai" model="ir.ui.view">
+        <field name="name">crm.tag.tree.ai</field>
+        <field name="model">crm.tag</field>
+        <field name="arch" type="xml">
+            <list editable="bottom">
+                <field name="name"/>
+                <field name="color" widget="color_picker"/>
+                <field name="is_ai_category" widget="boolean_toggle"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- 2. LA VUE FORMULAIRE (Héritage) -->
+    <record id="crm_tag_view_form_inherit_ai" model="ir.ui.view">
+        <field name="name">crm.tag.view.form.inherit.ai</field>
+        <field name="model">crm.tag</field>
+        <field name="inherit_id" ref="sales_team.sales_team_crm_tag_view_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='color']" position="after">
+                <field name="is_ai_category" widget="boolean_toggle"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- 3. L'ACTION (Peut maintenant faire référence à la vue liste) -->
+    <record id="action_ai_categories" model="ir.actions.act_window">
+        <field name="name">Catégories IA (Tags)</field>
+        <field name="res_model">crm.tag</field>
+        <field name="view_mode">list</field>
+        <field name="view_id" ref="view_crm_tag_tree_ai"/>
+        <field name="domain">[('is_ai_category', '=', True)]</field>
+        <field name="context">{'default_is_ai_category': True}</field>
+    </record>
+
+    <!-- 4. LE MENU -->
+    <menuitem id="menu_ai_categories" 
+              name="Catégories IA" 
+              parent="crm.crm_menu_config" 
+              action="action_ai_categories" 
+              sequence="15"/>
+</odoo>

@@ -88,7 +88,7 @@ Le module ne fait jamais confiance aveuglément aux réponses de l'IA :
 ### 4. Surcharges ORM et UI/UX
 * **Modèles `crm.lead` & `project.task` :** Extension des modèles pour inclure la géolocalisation de l'intervention (`intervention_address`), la langue (`detected_language`) et le traçage exact du type d'entité générée (`task_type`).
 * **Synchronisation Dynamique (`@api.onchange`) :** L'ajout ou la modification d'un tag métier déclenche la mise à jour en temps réel des tags prestataires sur la Tâche, facilitant le travail de dispatch manuel.
-* **Intégration CSS (Odoo Grids) :** Résolution des conflits d'affichage de la grille Odoo native (`<group>`) par l'encapsulation de composants Bootstrap (`d-flex`, `o_row`, `flex-grow-1`). Les badges IA ("Contact IA", statut d'analyse) sont parfaitement intégrés sans débordement ni troncature de texte.
+
 
 ---
 **Développé par :** Youssef Oualha  
